@@ -1,11 +1,11 @@
 #==============================================================
-#スタートアップ
+#Startup
 #-------------------------------------------------------------------------------------------
-import bpy #Blender内部のデータ構造にアクセスするために必要
+import bpy #Blender internal structures
 import os
 
 from bpy.props import\
-(#プロパティを使用するために必要
+(#Use these properties
 StringProperty,
 BoolProperty,
 IntProperty,
@@ -27,9 +27,9 @@ from . import DefineCommon as Common
 
 
 #==============================================================
-#使用クラスの宣言
+#class used
 #-------------------------------------------------------------------------------------------
-class CR_OT_String(PropertyGroup):#リストデータを保持するためのプロパティグループを作成
+class CR_OT_String(PropertyGroup):#Create a property group to hold list data
     Command : StringProperty(
     default=""
     ) #CR_Var.name
@@ -58,7 +58,7 @@ def CR_(Data , Num):
         exec("scene.CR_Var.List_Index_{0:03d} = {1}".format(Num,Data))
 
 
-def Get_Recent(Return_Bool):#操作履歴にアクセス
+def Get_Recent(Return_Bool): #Access operation history
     #remove other Recent Reports
     reports = \
     [
@@ -83,9 +83,9 @@ def Get_Recent(Return_Bool):#操作履歴にアクセス
     bpy.data.texts['Recent Reports'].write(clipboard)
     # print the report
     if Return_Bool == "Reports_All":
-        return bpy.data.texts["Recent Reports"].lines#操作履歴全ての行
+        return bpy.data.texts["Recent Reports"].lines#Operation history All lines
     elif Return_Bool == "Reports_Length":
-        return len(bpy.data.texts["Recent Reports"].lines)#操作履歴の要素数
+        return len(bpy.data.texts["Recent Reports"].lines)#Number of elements in operation history
 
 
 def Record(Num , Mode):
@@ -149,13 +149,13 @@ def Move(Num , Mode) :
             index1 += 1
             index2 += 1
             CR_("List",254).clear()
-            #254にIndex2を逃がす
+            #Let Index 2 escape to 254
             for Num_Command in CR_("List",index2) :
                 Item = CR_("List",254).add()
                 Item.name = Num_Command.name
             CR_(CR_("Index",index2),254)
             CR_("List",index2).clear()
-            #Index1からIndex2へ
+            #From # Index1 to Index2
             for Num_Command in CR_("List",index1) :
                 Item = CR_("List",index2).add()
                 Item.name = Num_Command.name
@@ -239,25 +239,25 @@ def Clear(Num) :
 
 
 class CR_OT_Selector(Operator):
-    bl_idname = "cr_selector.button"#大文字禁止
-    bl_label = "Button_Selector"#メニューに登録される名前
-    #bl_options = {'REGISTER', 'UNDO'} # 処理の属性
+    bl_idname = "cr_selector.button"#No capital letters
+    bl_label = "Button_Selector"#Name registered in the menu
+    #bl_options = {'REGISTER', 'UNDO'} # Processing attributes
     Mode : bpy.props.StringProperty(default="")
     def execute(self, context):
-        #追加
+        #Add to
         if self.Mode == "Add" :
             Add(0)
-        #削除
+        #Remove from
         elif self.Mode == "Remove" :
             Remove(0)
-        #上へ
+        #Move up
         elif self.Mode == "Up" :
             Move(0 , "Up")
-        #下へ
+        # Move down
         elif self.Mode == "Down" :
             Move(0 , "Down")
         bpy.context.area.tag_redraw()
-        return{'FINISHED'}#UI系の関数の最後には必ず付ける
+        return{'FINISHED'}#Be sure to add it to the end of UI functions
 
 class CR_OT_Selector_Up(Operator):
     bl_idname = "cr_selector_up.button"
@@ -278,30 +278,30 @@ class CR_OT_Selector_Down(Operator):
         return{'FINISHED'}
 
 class Command_OT_Play(Operator):
-    bl_idname = "cr_commandplay.button"#大文字禁止
-    bl_label = "Command_OT_Play"#メニューに登録される名前
-    bl_options = {'REGISTER', 'UNDO'}#アンドゥ履歴に登録
+    # the play command
+    bl_idname = "cr_commandplay.button"
+    bl_label = "Command_OT_Play"
+    bl_options = {'REGISTER', 'UNDO'}
     def execute(self, context):
-        #コマンドを実行
         Play(CR_("List",CR_("Index",0)+1))
-        return{'FINISHED'}#UI系の関数の最後には必ず付ける
+        return{'FINISHED'}
 
 
 
 class Command_OT_Add(Operator):
-    bl_idname = "cr_commandadd.button"#大文字禁止
-    bl_label = "Command_OT_Add"#メニューに登録される名前
-    #bl_options = {'REGISTER', 'UNDO'}#アンドゥ履歴に登録
+    bl_idname = "cr_commandadd.button"
+    bl_label = "Command_OT_Add"
+    #bl_options = {'REGISTER', 'UNDO'}#
     def execute(self, context):
-        #コマンドを実行
+        
         Add(CR_("Index",0)+1)
         bpy.context.area.tag_redraw()
-        return{'FINISHED'}#UI系の関数の最後には必ず付ける
+        return{'FINISHED'}
 
 class CR_OT_Command(Operator):
-    bl_idname = "cr_command.button"#大文字禁止
-    bl_label = "Button_Command"#メニューに登録される名前
-    #bl_options = {'REGISTER', 'UNDO'} # 処理の属性
+    bl_idname = "cr_command.button
+    bl_label = "Button_Command"
+    #bl_options = {'REGISTER', 'UNDO'} 
     Mode : bpy.props.StringProperty(default="")
     def execute(self, context):
         #録画を開始
@@ -332,7 +332,7 @@ class CR_OT_Command(Operator):
 
 
 
-def StrageFile() :
+def StorageFile() :
     Name_File = "CommandRecorder_Storage.txt"
     AddonDirector = os.path.dirname(os.path.abspath(__file__))#アドオン管理システムの絶対パスを取得
     File_Path = os.path.normpath(os.path.join(AddonDirector, '../CommandRecorder-master/Storage/' + Name_File))
